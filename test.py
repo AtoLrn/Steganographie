@@ -13,7 +13,7 @@ def encode(Text):
     pix = im.load()
     startPixels = [ 0, 0]
     for  i in range(len(Text)):
-        binaryChar = bin(int.from_bytes(Text[i].encode(), 'big'))
+        binaryChar = bin(int.from_bytes(Text[i].encode(), 'big'))   
         binaryChar = binaryChar[2:len(binaryChar)]
         #print(binaryChar)
         while (len(binaryChar)  < 8):
