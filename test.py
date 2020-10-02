@@ -37,6 +37,7 @@ def encode(File):
 
     im = Image.open('image1.jpg')
     pix = im.load()
+
     startPixels = [0, 0]
     for i in range(len(Text)):
         print('HEY LA 6T :', bin(Text[i]))
