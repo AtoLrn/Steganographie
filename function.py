@@ -16,15 +16,15 @@ def steganoBMPReverse(fileData, pixelStart):
 	byteValue = 0  # octet actuel
 	data = []
 	actualByte = pixelStart  # octet dans les données du BMP
-	dataByte = 0  # octet actuel de la data
+	#dataByte = 0  # octet actuel de la data
 	while byteValue % 2 == 0:  # 9bits a récupérer si poid faible a 1 alors fin du message
 		byteValue = 0  # initialisation
 		for i in range(3):
 			byteValue *= 8  # déplacement de 3 bits (2³ = 8) vers la gauche du nombre
 			byteValue += fileData[actualByte] % 8  # récupération des 3 bits de poids faible
 			actualByte += 1  # déplacement de l'octet vers le suivant
-		data[dataByte] = byteValue/2 - (byteValue % 2)  # récupération de 8bits (sans le bit de poids faible indiquant la fin du message)
+		data.append((int((byteValue - (byteValue % 2)) / 2)))  # récupération de 8bits (sans le bit de poids faible indiquant la fin du message)
 		actualByte += 1  # déplacement de l'octet a lire (car pixel RGB+0xFF en BMP)
-		dataByte += 1  # déplacement vers octet de data suivant
+		#dataByte += 1  # déplacement vers octet de data suivant
 	return data
 

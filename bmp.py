@@ -8,8 +8,6 @@ pixelStart = fileData[10]
 width = fileData[21] * 16 * 16 * 16 + fileData[20] * 16 * 16 + fileData[19] * 16 + fileData[18]
 heigth = fileData[25] * 16 * 16 * 16 + fileData[24] * 16 * 16 + fileData[23] * 16 + fileData[22]
 fileLength = os.stat("test.bmp").st_size
-print(len(fileData))
-print(str(width) + " : " + str(heigth))
 data = "ABCD"
 # for i in range(len(data)):
 # 	byte = ord(data[i]) * 2 # mise sur 9 bits de l'octet
@@ -23,8 +21,10 @@ data = "ABCD"
 
 steganoFile = function.steganoBMP(fileData, pixelStart, data)
 newFile.write(steganoFile)
-
-fileData2 = newFile.read()
-
-print(function.steganoBMPReverse(fileData2, pixelStart))
+newFile.close()
+file2 = open("testStegano.bmp", "rb")
+fileData2 = bytearray(file2.read())
+res = function.steganoBMPReverse(fileData2, pixelStart)
+for i in range(len(res)):
+	print(str(res[i]))
 
