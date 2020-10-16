@@ -26,5 +26,5 @@ file2 = open("testStegano.bmp", "rb")
 fileData2 = bytearray(file2.read())
 res = function.steganoBMPReverse(fileData2, pixelStart)
 for i in range(len(res)):
-	print(str(res[i]))
+	print(str(res[i]), end="")
 
