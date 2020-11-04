@@ -28,27 +28,29 @@ def ArrayToFile(array):
     file.close()
 
 
-def encode(File):
-    FileExtension = File[File.find('.')+1: len(File)]
-    print(FileExtension)
-    Text = 'blabla'
+def encode(array, File):
 
-    Text = open(File, 'rb').read()
-
-    im = Image.open('image1.jpg')
+    im = Image.open(File)
+    size = im.size
     pix = im.load()
-    startPixels = [0, 0]
-    for i in range(len(Text)):
-        print('HEY LA 6T :', bin(Text[i]))
-        binaryChar = bin(int.from_bytes(Text[i].encode(), 'big'))
+    # startPixels = [0, 0]
+    pixel = 0
+    y = 0
+    for i in range(0, len(array)):
+        binaryChar = bin(int(array[i], 16))
         binaryChar = binaryChar[2:len(binaryChar)]
-        # print(binaryChar)
-        while (len(binaryChar) < 8):
-            binaryChar = ('0' + binaryChar)
+        binaryChar = binaryChar.zfill(8)
+
         binaryChar = (binaryChar + '1')
-        RGB_Start = list(pix[startPixels[0], 0])
-        RGB_Middle = list(pix[startPixels[0]+1, 0])
-        RGB_End = list(pix[startPixels[0]+2, 0])
+
+        # RGB_Start = list(pix[startPixels[0], startPixels[1]])
+        # RGB_Middle = list(pix[startPixels[0]+1, startPixels[1]])
+        # RGB_End = list(pix[startPixels[0]+2, startPixels[1]])
+        RGB_Start = list(pix[pixel % size[0], int(pixel / size[0])])
+        pixel = pixel+1
+        RGB_Middle = list(pix[pixel % size[0], int(pixel / size[0])])
+        pixel = pixel+1
+        RGB_End = list(pix[pixel % size[0], int(pixel / size[0])])
         RGB = [RGB_Start, RGB_Middle, RGB_End]
         # print(RGB)
         # print(binaryChar)
@@ -62,10 +64,9 @@ def encode(File):
                 binaryChar[binar], RGB[indexOfPixel][indexOfRGB])
             # print(RGB[indexOfPixel][indexOfRGB])
 
-        pix[startPixels[0], 0] = tuple(RGB[0])
-        pix[startPixels[0]+1, 0] = tuple(RGB[1])
-        pix[startPixels[0]+2, 0] = tuple(RGB[2])
-        startPixels = [startPixels[0] + 3, 0]
+        pix[(pixel % size[0]) - 2, int(pixel / size[0])] = tuple(RGB[0])
+        pix[(pixel % size[0]) - 1, int(pixel / size[0])] = tuple(RGB[1])
+        pix[pixel % size[0], int(pixel / size[0])] = tuple(RGB[2])
 
         # print(pix[0, 0], pix[1, 0], pix[2, 0])
     im.save('codedImage.png')
@@ -91,20 +92,36 @@ def decode(fileName):
         i += 3
 
     finalStr = ''
+    file = ''
+    isFileName = True
     for char in Text:
-        finalStr += chr(int(char, 2))
-    print(finalStr)
+        if (char == '00000001'):
+            isFileName = False
+            continue
+        if (isFileName == True):
+            file += chr(int(char, 2))
+        else:
+            finalStr += chr(int(char, 2))
+    print(file, finalStr)
+    returnFile = open('a'+file, 'w')
+    for char in finalStr:
+        returnFile.write(char)
+    returnFile.close()
 
 
-# encode('image1.jpg')
+def transformArray(array):
+    tmpArray = []
+    for char in array[0]:
+        tmpArray.append(hex(ord(char))[2:].zfill(2))
+    tmpArray.append('01')
+    tmpArray.extend(array[1:])
+    return tmpArray
+
+
+array = FileToArray('image1.jpg')
+# print(array)
+array = transformArray(array)
+# print(array)
+encode(array, 'imageTest.jpg')
+
 # decode('codedImage.png')
-
-# print(open('image1.jpg', 'rb').read(1))
-
-
-# print(int(open('test.txt', 'rb').read().hex(), 16))
-ArrayToFile(FileToArray('image1.jpg'))
-
-#image = open('image1.jpg', 'rb')
-
-# print(bin(image.read()[101])[2:].zfill(8))

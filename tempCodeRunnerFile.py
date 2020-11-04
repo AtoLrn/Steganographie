@@ -1,4 +1,3 @@
-   for i in range(len(fileData)):
-#         fileArray.append(hex(fileData[i]))
-#     print(fileArray)
-#     return fileArray
+array = FileToArray('image1.jpg')
+# array = transformArray(array)
+# encode(array, 'imageTest.jpg')
