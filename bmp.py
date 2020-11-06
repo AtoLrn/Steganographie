@@ -8,7 +8,7 @@ pixelStart = fileData[10]
 width = fileData[21] * 16 * 16 * 16 + fileData[20] * 16 * 16 + fileData[19] * 16 + fileData[18]
 heigth = fileData[25] * 16 * 16 * 16 + fileData[24] * 16 * 16 + fileData[23] * 16 + fileData[22]
 fileLength = os.stat("test.bmp").st_size
-data = "ABCD"
+data = "Bonojur bande de con"
 # for i in range(len(data)):
 # 	byte = ord(data[i]) * 2 # mise sur 9 bits de l'octet
 # 	if i == len(data) - 1:
@@ -28,3 +28,9 @@ res = function.steganoBMPReverse(fileData2, pixelStart)
 for i in range(len(res)):
 	print(str(res[i]), end="")
 
+datatopermut = []
+for i in range(64):
+	datatopermut.append(i+1)
+
+print(datatopermut)
+print(function.permutation(datatopermut))
