@@ -6,7 +6,7 @@ import http.server
 
 ########################################################################
 CURRENT_PATH = "/webpy"
-WWW_DEFAULT_PORT = 8080
+WWW_DEFAULT_PORT = 80
 WWW_DEFAULT_IP = ("stegano.macaron-dev.fr/", WWW_DEFAULT_PORT)
 WWW_DEFAULT_PAGE = "/index.py"
 WWW_PATH = "/www-py"
