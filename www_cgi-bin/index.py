@@ -11,7 +11,11 @@ html = """<!DOCTYPE html>
         <title>Steganography</title>
     </head>
     <body>
+<<<<<<< HEAD
         
+=======
+        petit test
+>>>>>>> afb4a4a... Rectification part 2
     </body>
 </html>
 """
