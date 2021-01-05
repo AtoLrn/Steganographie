@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # coding: utf-8
 import cgi
 form = cgi.FieldStorage()
@@ -11,11 +11,7 @@ html = """<!DOCTYPE html>
         <title>Steganography</title>
     </head>
     <body>
-<<<<<<< HEAD
-        
-=======
-        petit test
->>>>>>> afb4a4a... Rectification part 2
+
     </body>
 </html>
 """
