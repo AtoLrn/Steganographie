@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>StegaNono le petit robot</title>
+</head>
+<body>
+    <header><h1>Setganographie et Phiegranogates </h1></header>
+    <main>
+        <h2>Creer une nouvelle image</h2>
+
+        <form method="post" action="/cgi-bin/index.py">
+            <div id="div1-1">
+                <label>Telechargez votre image</label>
+                <input type="file" name="img" name="img" accept="image/bmp, image/png" >
+            </div>
+            <div id="div1-2">
+                <label>Saisisez votre message</label>
+                <input type="text" name="message" >
+            </div>
+            <div id="div1-3">
+                <label>Saisisez un mot de passe</label>
+                <input type="text" name="password">
+            </div>
+            <div id="div1-4">
+                <input type="submit" value="Creer">
+            </div>
+        </form>
+
+        <h2>Decoder une image</h2>
+
+        <form method="post" action="server.py">
+            <div id="div2-1">
+                <label>Telechargez votre image contenant un message</label>
+                <input type="file" name="img" accept="image/bmp, image/png" >
+            </div>
+            <div id="div2-2">
+                <label>Saisisez le mot de passe associe</label>
+                <input type="text" name="password">
+            </div>
+            <div id="div2-3">
+                <input type="submit" value="Decoder">
+            </div>
+        </form>
+        <div id="div3-1">
+            <label>Resultat</label>
+        </div>
+        <div id="div3-2">
+            <textarea id="Result" rows="10" cols="30" readonly></textarea>
+        </div>
+    </main>
+    <footer></footer>
+</body>
+</html>
