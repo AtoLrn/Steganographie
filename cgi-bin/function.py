@@ -1,4 +1,4 @@
-import os
+
 
 def steganoBMPFile(fileData, pixelStart, data):
 	for i in range(len(data)):
