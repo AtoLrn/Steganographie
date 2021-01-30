@@ -5,7 +5,7 @@
 import cgi
 
 ########################################################################
-CURRENT_PATH = "/webpy/"
+CURRENT_PATH = "./cgi-bin/"
 #WWW_PATH = "template/"
 WWW_DEFAULT_PAGE = CURRENT_PATH+"index.html"
 
@@ -14,15 +14,14 @@ def index():
 	f=open(WWW_DEFAULT_PAGE, "r")
 	print(f.read())
 	f.close()
- 
+
 #traitement functions.py, bmp.py, png.py
 #def datas(form):
 
 ########################################################################
 form = cgi.FieldStorage()
-if form.getvalue('id') == None:
-	print("Content-type: text/html; charset=utf-8\n")
-	index()
+print("Content-type: text/html; charset=utf-8\n")
+index()
 #else:
 	#datas(form)
 
