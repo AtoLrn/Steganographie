@@ -15,7 +15,7 @@ def encodePng(File, data):
     encodingTotalSize = (2 * totalSize)/3
 
     if (len(data) > encodingTotalSize):
-        return 0
+        return -1
 
     y = 0
     for i in range(0, len(data)):
@@ -36,7 +36,7 @@ def encodePng(File, data):
         y = y + 1
 
     im.save('encoded.png')
-    return 1
+    return 0
 
 
 def decodePng(File):
