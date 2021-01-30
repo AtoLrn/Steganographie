@@ -36,7 +36,7 @@ def steganoBMP(filename, message, length):
 	pS = fData[10]
 	width = fData[21] * 16 * 16 * 16 + fData[20] * 16 * 16 + fData[19] * 16 + fData[18]
 	heigth = fData[25] * 16 * 16 * 16 + fData[24] * 16 * 16 + fData[23] * 16 + fData[22]
-	if length > ((width * heigth) / 3):
+	if length > (width * heigth):
 		print("Error message length too long for this file")
 		return -1
 	newData = steganoBMPFile(fData, pS, message)
