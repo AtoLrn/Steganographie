@@ -5,8 +5,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
 import cgi_bin.router
-import urllib.parse
-import os                                   #permet ainsi de gérer l’arborescence des fichiers
 
 ########################################################################
 DEFAULT_PORT = 8080
@@ -30,10 +28,18 @@ class ServerPY(BaseHTTPRequestHandler):
             self.wfile.write(bytes("Introuvable", "utf-8"))
 
     def do_POST(self):
-        length = int(self.headers.get("Content-Length"))
-        body = self.rfile.read(length)
-        body = format(body)
-        print(body)
+        response_post = cgi_bin.router.route_post(self.path)
+        if response_post['code'] != 404:
+            self.send_response(200)
+            self.send_header("Content-type", response_post['type'])
+            self.end_headers()
+            self.wfile.write(response_post['file'])
+        else:
+            self.send_response(404)
+            self.send_header("Content-type", 'text/plain')
+            self.end_headers()
+            self.wfile.write(bytes("Introuvable2", "utf-8"))
+
 
 #########################################################################
 handler = ServerPY                                      #classe du gestionnaire de requetes

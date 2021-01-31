@@ -3,16 +3,52 @@
 <head>
     <meta charset="utf-8">
     <title>StegaNono le petit robot</title>
+    <script type="text/javascript">
+    function ajax(){
+
+        let xhr = new XMLHttpRequest(); // Creation d'un objet requete
+        xhr.onreadystatechange = function() { //'Chngement d'etat' de la variable
+        if (xhr.readyState === 4){ // Verifie l'envoit de la requete/ 4 == DONE
+            if (xhr.status === 200){ //Reponse de la requete http / 200 == http valide
+                console.log('DONE');
+            }
+          }
+        };
+        xhr.open('POST', '/stegano'); // Prepare une requete a envoyer en post au fichier de verif
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); //Envoit une requete avec des donnees en post ou get
+        xhr.setRequestHeader('Controle-Cache', 'no-cache'); // Evite les enregistrements en caches
+
+        xhr.send(); // envoit de la requete
+      }
+
+      function ajax_reverse(){
+
+          let xhr = new XMLHttpRequest(); // Creation d'un objet requete
+          xhr.onreadystatechange = function() { //'Chngement d'etat' de la variable
+          if (xhr.readyState === 4){ // Verifie l'envoit de la requete/ 4 == DONE
+              if (xhr.status === 200){ //Reponse de la requete http / 200 == http valide
+                console.log('DONE');
+              }
+            }
+          };
+          xhr.open('POST', '/stegano_reverse'); // Prepare une requete a envoyer en post au fichier de verif
+          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); //Envoit une requete avec des donnees en post ou get
+          xhr.setRequestHeader('Controle-Cache', 'no-cache'); // Evite les enregistrements en caches
+
+          xhr.send(); // envoit de la rquete
+        }
+
+    </script>
 </head>
 <body>
-    <header><h1>Setganographie et Phiegranogates </h1></header>
+    <header><h1>Setganographie et Phiegranogaste </h1></header>
     <main>
         <h2>Creer une nouvelle image</h2>
 
-        <form method="post" action="./index.py">
+        <form method="post" action="">
             <div id="div1-1">
                 <label>Telechargez votre image</label>
-                <input type="file" name="img" name="img" accept="image/bmp, image/png" >
+                <input type="file" name="img" accept="image/bmp, image/png">
             </div>
             <div id="div1-2">
                 <label>Saisisez votre message</label>
@@ -23,13 +59,13 @@
                 <input type="text" name="password">
             </div>
             <div id="div1-4">
-                <input type="submit" value="Creer">
+                <input type="Submit" name="Submit" value="Creer" onclick="ajax()">
             </div>
         </form>
 
         <h2>Decoder une image</h2>
 
-        <form method="post" action="server.py">
+        <form method="post" action="">
             <div id="div2-1">
                 <label>Telechargez votre image contenant un message</label>
                 <input type="file" name="img" accept="image/bmp, image/png" >
@@ -39,7 +75,7 @@
                 <input type="text" name="password">
             </div>
             <div id="div2-3">
-                <input type="submit" value="Decoder">
+                <input type="submit" name="" value="Decoder" onclick="ajax_reverse()">
             </div>
         </form>
         <div id="div3-1">
