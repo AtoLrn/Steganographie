@@ -5,8 +5,15 @@
     <title>StegaNono le petit robot</title>
     <script type="text/javascript">
     function ajax(){
+        const img = document.getElementById('img').value;
+        const msg = document.getElementById('msg').value;
+        const pwd = document.getElementById('pwd').value;
 
         let xhr = new XMLHttpRequest(); // Creation d'un objet requete
+        xhr.open('POST', 'stegano'); // Prepare une requete a envoyer en post au fichier de verif
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); //Envoit une requete avec des donnees en post ou get
+        xhr.setRequestHeader('Controle-Cache', 'no-cache'); // Evite les enregistrements en caches
+
         xhr.onreadystatechange = function() { //'Chngement d'etat' de la variable
         if (xhr.readyState === 4){ // Verifie l'envoit de la requete/ 4 == DONE
             if (xhr.status === 200){ //Reponse de la requete http / 200 == http valide
@@ -14,16 +21,17 @@
             }
           }
         };
-        xhr.open('POST', '/stegano'); // Prepare une requete a envoyer en post au fichier de verif
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); //Envoit une requete avec des donnees en post ou get
-        xhr.setRequestHeader('Controle-Cache', 'no-cache'); // Evite les enregistrements en caches
 
-        xhr.send(); // envoit de la requete
+        xhr.send('img='+img+'&msg='+msg+'&pwd='+pwd); // envoit de la requete
       }
 
       function ajax_reverse(){
 
           let xhr = new XMLHttpRequest(); // Creation d'un objet requete
+          xhr.open('POST', '/stegano_reverse'); // Prepare une requete a envoyer en post au fichier de verif
+          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); //Envoit une requete avec des donnees en post ou get
+          xhr.setRequestHeader('Controle-Cache', 'no-cache'); // Evite les enregistrements en caches
+
           xhr.onreadystatechange = function() { //'Chngement d'etat' de la variable
           if (xhr.readyState === 4){ // Verifie l'envoit de la requete/ 4 == DONE
               if (xhr.status === 200){ //Reponse de la requete http / 200 == http valide
@@ -31,11 +39,8 @@
               }
             }
           };
-          xhr.open('POST', '/stegano_reverse'); // Prepare une requete a envoyer en post au fichier de verif
-          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); //Envoit une requete avec des donnees en post ou get
-          xhr.setRequestHeader('Controle-Cache', 'no-cache'); // Evite les enregistrements en caches
 
-          xhr.send(); // envoit de la rquete
+          xhr.send(); // envoit de la requete
         }
 
     </script>
@@ -48,7 +53,7 @@
         <form method="post" action="">
             <div id="div1-1">
                 <label>Telechargez votre image</label>
-                <input type="file" name="img" accept="image/bmp, image/png">
+                <input type="file" accept="image/bmp, image/png" id="img">
             </div>
             <div id="div1-2">
                 <label>Saisisez votre message</label>
