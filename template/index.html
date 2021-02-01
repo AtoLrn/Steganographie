@@ -9,7 +9,7 @@
     <main>
         <h2>Creer une nouvelle image</h2>
 
-        <form method="post" action="./index.py">
+        <form method="post" enctype="multipart/form-data" onsubmit="return encode(this)">
             <div id="div1-1">
                 <label>Telechargez votre image</label>
                 <input type="file" name="img" name="img" accept="image/bmp, image/png" >
@@ -26,10 +26,12 @@
                 <input type="submit" value="Creer">
             </div>
         </form>
+        <div id="resultImg">
 
+        </div>
         <h2>Decoder une image</h2>
 
-        <form method="post" action="server.py">
+        <form method="post" enctype="multipart/form-data" onsubmit="return decode(this)">
             <div id="div2-1">
                 <label>Telechargez votre image contenant un message</label>
                 <input type="file" name="img" accept="image/bmp, image/png" >
@@ -51,4 +53,34 @@
     </main>
     <footer></footer>
 </body>
+<script>
+    function encode(form){
+        let FD = new FormData(form);
+        let req = new XMLHttpRequest();
+        req.onreadystatechange = function (){
+            if(req.readyState === req.DONE){
+                if(req.status === 200){
+                    console.log(req.response);
+                }
+            }
+        }
+        req.open("POST", "http://localhost:8443/stegano");
+        req.send(FD);
+        return false;
+    }
+	function decode(form){
+        let FD = new FormData(form);
+        let req = new XMLHttpRequest();
+        req.onreadystatechange = function (){
+            if(req.readyState === req.DONE){
+                if(req.status === 200){
+                    console.log(req.response);
+                }
+            }
+        }
+        req.open("POST", "http://localhost:8443/stegano-reverse");
+        req.send(FD);
+        return false;
+    }
+</script>
 </html>

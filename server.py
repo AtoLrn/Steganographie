@@ -1,51 +1,31 @@
-#!/usr/bin/python3.7
-# coding: utf-8
-
-########################################################################
-from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
-import cgi_bin.router
-import urllib.parse
-import os                                   #permet ainsi de gérer l’arborescence des fichiers
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import cgi_bin.router as router
 
-########################################################################
-DEFAULT_PORT = 8080
-HOSTNAME = ("", DEFAULT_PORT)               #all interfaces on the port listen == ""
-WWW_PATH = "/cgi-bin/"
+hostname = "localhost"
+hostPort = 8443
 
 
-########################################################################
-class ServerPY(BaseHTTPRequestHandler):
-    def do_GET(self):
-        response = cgi_bin.router.route_get(self.path)
-        if response['code'] != 404:
-            self.send_response(200)
-            self.send_header("Content-type", response['type'])
-            self.end_headers()
-            self.wfile.write(response['file'])
-        else:
-            self.send_response(404)
-            self.send_header("Content-type", 'text/plain')
-            self.end_headers()
-            self.wfile.write(bytes("Introuvable", "utf-8"))
+class MyServer(BaseHTTPRequestHandler):
+	def do_GET(self):
+		response = router.route_get(self.path)
+		router.send_rep(self, response)
 
-    def do_POST(self):
-        length = int(self.headers.get("Content-Length"))
-        body = self.rfile.read(length)
-        body = format(body)
-        print(body)
+	def do_POST(self):
+		length = int(self.headers['Content-Length'])
+		body = self.rfile.read(length)
+		fields = router.parse_post(body)
+		response = router.route_post(self.path, fields)
+		router.send_rep(self, response)
 
-#########################################################################
-handler = ServerPY                                      #classe du gestionnaire de requetes
-handler.cgi_directories = [WWW_PATH]
-httpd = HTTPServer(HOSTNAME, handler)                   #instancie le serveur (addr + gestionnaire)
 
-########################################################################
-print(time.asctime(), "Server Starts - %s:%s" % (HOSTNAME, DEFAULT_PORT))
+myServer = HTTPServer((hostname, hostPort), MyServer)
+print(time.asctime(), "Server Starts - %s:%s" % (hostname, hostPort))
+
 try:
-    httpd.serve_forever()
+	myServer.serve_forever()
 except KeyboardInterrupt:
-    pass
+	pass
 
-httpd.server_close()
-print(time.asctime(), "Server Stop %s:%s" % (HOSTNAME, DEFAULT_PORT))
+myServer.server_close()
+print(time.asctime(), "Server Stop %s:%s" % (hostname, hostPort))
