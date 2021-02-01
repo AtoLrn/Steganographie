@@ -1,8 +1,13 @@
 import function
 
-data = "bonjour bande de con"
-function.steganoBMP("test.bmp", data, 52)
+data = "Un jour je deviendrai hokage"
+key = "12345678"
+
+encrypted_message = function.encryptage(data, key)
+function.steganoBMP("test.bmp", encrypted_message, 52)
+
 res = function.steganoBMPReverse("result.bmp")
-for i in range(len(res)):
-	print(str(res[i]), end="")
+decrypted_message = function.decryptage(res, key)
+
+print(decrypted_message)
 

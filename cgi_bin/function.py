@@ -1,4 +1,5 @@
 from PIL import Image
+from des import DesKey
 
 
 def writeValue(encodeValue, initialValue):
@@ -12,14 +13,14 @@ def encodePng(File, data):
     size = im.size
     pix = im.load()
     totalSize = size[0] * size[1]
-    encodingTotalSize = (2 * totalSize)/3
+    encodingTotalSize = (2 * totalSize) / 3
 
     if (len(data) > encodingTotalSize):
         return -1
 
     y = 0
     for i in range(0, len(data)):
-        byte = ord(data[i])*2
+        byte = ord(data[i]) * 2
         pixel = list(pix[y % size[0], int(y / size[0])])
 
         if i == len(data) - 1:
@@ -45,14 +46,14 @@ def decodePng(File):
     pix = im.load()
     result = []
     y = 0
-    while(True):
+    while (True):
         data = 0
         for i in range(3):
-            value = pix[y % size[0], int(y / size[0])][2-i] % 8
+            value = pix[y % size[0], int(y / size[0])][2 - i] % 8
             data *= 8
             data += value
             print(value)
-        result.append(chr(int(data/2)))
+        result.append(chr(int(data / 2)))
         if (pix[y % size[0], int(y / size[0])][0] % 2 != 0):
             break
         y += 1
@@ -62,18 +63,18 @@ def decodePng(File):
 
 def steganoBMPFile(fileData, pixelStart, data):
     for i in range(len(data)):
-        byte = ord(data[i]) * 2  # mise sur 9 bits de l'octet
+        byte = data[i] * 2  # mise sur 9 bits de l'octet
         if i == len(data) - 1:
             byte += 1  # pour terminer le message
         for j in range(3):  # decoupe des 9 bits en 3 * 3 bits
             tb = int(byte % 8)  # 3 bits car 2³ = 8
             byte = (byte - byte % 8) / 8  # supression des 3 bits traités
             # détermination de l'octet a modifier
-            actualByte = pixelStart + i*4 + (2-j)
+            actualByte = pixelStart + i * 4 + (2 - j)
             # (début image + octet du message * 4 (taille d'un pixel en BMP RGB+0xFF) + 3 - position des 3 bits en utilisation)
             # mise a jour des data de l'image
             fileData[actualByte] = fileData[actualByte] - \
-                (fileData[actualByte] % 8) + tb
+                                   (fileData[actualByte] % 8) + tb
     return fileData
 
 
@@ -90,10 +91,10 @@ def steganoBMPFileReverse(fileData, pixelStart):
             byteValue += fileData[actualByte] % 8
             actualByte += 1  # déplacement de l'octet vers le suivant
         # récupération de 8bits (sans le bit de poids faible indiquant la fin du message)
-        data.append(chr(int((byteValue - (byteValue % 2)) / 2)))
+        data.append(int((byteValue - (byteValue % 2)) / 2))
         # déplacement de l'octet a lire (car pixel RGB+0xFF en BMP)
         actualByte += 1
-    return data
+    return bytes(data)
 
 
 def steganoBMP(filename, message, length):
@@ -102,9 +103,9 @@ def steganoBMP(filename, message, length):
     f.close()
     pS = fData[10]
     width = fData[21] * 16 * 16 * 16 + fData[20] * \
-        16 * 16 + fData[19] * 16 + fData[18]
+            16 * 16 + fData[19] * 16 + fData[18]
     heigth = fData[25] * 16 * 16 * 16 + fData[24] * \
-        16 * 16 + fData[23] * 16 + fData[22]
+             16 * 16 + fData[23] * 16 + fData[22]
     if length > (width * heigth):
         print("Error message length too long for this file")
         return -1
@@ -121,3 +122,19 @@ def steganoBMPReverse(filename):
     f.close()
     pS = fData[10]
     return steganoBMPFileReverse(fData, pS)
+
+
+def encryptage(data, key):
+    ndata = data.encode('utf-8')
+    nkey = key.encode('utf-8')
+    key0 = DesKey(nkey)
+    encrypted_message = key0.encrypt(ndata, padding=True)
+    return encrypted_message
+
+
+def decryptage(data, key):
+    nkey = key.encode('utf-8')
+    key0 = DesKey(nkey)
+    decrypted_message = key0.decrypt(data, padding=True)
+    decrypted_message = decrypted_message.decode('utf-8')
+    return decrypted_message
