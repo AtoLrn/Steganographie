@@ -1,6 +1,7 @@
 import time
 import s_function
 import re
+import os
 
 
 def route_get(URI):
@@ -17,12 +18,16 @@ def route_get(URI):
 			type = "image/png"
 		else:
 			return {"code": "403", "file": bytes("Interdit", "utf-8")}
-		f = open(filenmame, "rb")
-		body = f.read()
-		f.close()
+		if os.path.exists("../img/" + filenmame):
+			f = open("../img/" + filenmame, "rb")
+			body = f.read()
+			f.close()
+			os.remove("../img/" + filenmame)
+		else:
+			return {"code": 404, "file": "Not Found"}
 		return {"code": 200, "file": body, "type": type}
 	else:
-		return {"code": 404}
+		return {"code": 404, "file": "Not Found"}
 
 
 def route_post(URI, body):
@@ -33,13 +38,13 @@ def route_post(URI, body):
 			if "filename" in body[i]:
 				value["filename"] = body[i]["filename"]
 		filename = str(time.time()).replace(".", "_") + value["filename"]
-		save_file(filename, "./", value["img"])
+		save_file(filename, "../img/", value["img"])
 		message = s_function.encryptage(value["message"].decode("utf-8"), value["password"].decode("utf-8"))
 		f = filename.split('.')
 		if f[len(f)-1] == "bmp":
-			s_function.steganoBMP(filename, message, len(message))
+			s_function.steganoBMP("../img/" + filename, message, len(message))
 		elif f[len(f)-1] == "png":
-			s_function.encodePng(filename, message)
+			s_function.encodePng("../img/" + filename, message)
 		else:
 			return {"code": "409", "file": "Mauvais type"}
 		return {"code": 200, "file": bytes(filename, "utf-8"), "type": "text/plain"}
@@ -50,12 +55,12 @@ def route_post(URI, body):
 			if "filename" in body[i]:
 				value["filename"] = body[i]["filename"]
 		filename = str(time.time()).replace(".", "_") + value["filename"]
-		save_file(filename, "./", value["img"])
+		save_file(filename, "../img/", value["img"])
 		f = filename.split('.')
 		if f[len(f) - 1] == "bmp":
-			message = s_function.steganoBMPReverse(filename)
+			message = s_function.steganoBMPReverse("../img/" + filename)
 		elif f[len(f) - 1] == "png":
-			message = s_function.decodePng(filename)
+			message = s_function.decodePng("../img/" + filename)
 		else:
 			return {"code": "409", "file": "Mauvais type"}
 		message = s_function.decryptage(message, value["password"].decode("utf8"))

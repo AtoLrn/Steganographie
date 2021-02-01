@@ -4,62 +4,47 @@ from des import DesKey
 
 def writeValue(encodeValue, initialValue):
 	step = initialValue % 8
-
 	return initialValue + (encodeValue - step)
 
 
-def encodePng(File, data):
-	im = Image.open(File)
+def encodePng(filename, data):
+	im = Image.open(filename)
 	size = im.size
 	pix = im.load()
 	totalSize = size[0] * size[1]
-	encodingTotalSize = (2 * totalSize) / 3
-
-	if len(data) > encodingTotalSize:
+	if len(data) > totalSize:
 		return -1
-
-	y = 0
 	for i in range(0, len(data)):
-		byte = ord(data[i]) * 2
-		pixel = list(pix[y % size[0], int(y / size[0])])
-
+		byte = data[i] * 2
+		pixel = list(pix[i % size[0], int(i / size[0])])
 		if i == len(data) - 1:
 			byte += 1  # pour terminer le message
 		for j in range(3):  # decoupe des 9 bits en 3 * 3 bits
 			tb = int(byte % 8)  # 3 bits car 2³ = 8
-
 			byte = (byte - byte % 8) / 8
 			pixel[j] = writeValue(
 				tb, pixel[j])
-
-		pix[y % size[0], int(y / size[0])] = tuple(pixel)
-
-		y = y + 1
-
-	im.save('encoded.png')
+		pix[i % size[0], int(i / size[0])] = tuple(pixel)
+	im.save(filename)
 	return 0
 
 
-def decodePng(File):
-	im = Image.open(File)
+def decodePng(filename):
+	im = Image.open(filename)
 	size = im.size
 	pix = im.load()
 	result = []
 	y = 0
-	while (True):
+	data = 0
+	while data % 2 == 0:
 		data = 0
 		for i in range(3):
 			value = pix[y % size[0], int(y / size[0])][2 - i] % 8
 			data *= 8
 			data += value
-			print(value)
-		result.append(chr(int(data / 2)))
-		if (pix[y % size[0], int(y / size[0])][0] % 2 != 0):
-			break
+		result.append(int(data / 2))
 		y += 1
-	result = "".join(result)
-	print(result)
-	return bytes(result, "utf-8")
+	return bytes(result)
 
 
 def steganoBMPFile(fileData, pixelStart, data):
@@ -74,8 +59,7 @@ def steganoBMPFile(fileData, pixelStart, data):
 			actualByte = pixelStart + i * 4 + (2 - j)
 			# (début image + octet du message * 4 (taille d'un pixel en BMP RGB+0xFF) + 3 - position des 3 bits en utilisation)
 			# mise a jour des data de l'image
-			fileData[actualByte] = fileData[actualByte] - \
-								   (fileData[actualByte] % 8) + tb
+			fileData[actualByte] = fileData[actualByte] - (fileData[actualByte] % 8) + tb
 	return fileData
 
 
