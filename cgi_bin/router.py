@@ -1,13 +1,26 @@
 import time
-import function
+import s_function
+import re
 
 
 def route_get(URI):
+	match = re.match("/retrieve-([a-zA-Z0-9._-]+)", URI)
 	if URI == "/":
-		data = bytes(open("index.html", "r").read(), "utf-8")
+		data = bytes(open("../template/index.html", "r").read(), "utf-8")
 		return {"code": 200, "file": data, "type": "text/html"}
-	elif URI == "/test":
-		return {"code": 200, "file": bytes("TEST", "utf-8"), "type": "text/plain"}
+	elif match is not None:
+		filenmame = match.group(1)
+		type = filenmame.split('.')
+		if type[len(type)-1] == "bmp":
+			type = "image/bmp"
+		elif type[len(type)-1] == "png":
+			type = "image/png"
+		else:
+			return {"code": "403", "file": bytes("Interdit", "utf-8")}
+		f = open(filenmame, "rb")
+		body = f.read()
+		f.close()
+		return {"code": 200, "file": body, "type": type}
 	else:
 		return {"code": 404}
 
@@ -19,18 +32,34 @@ def route_post(URI, body):
 			value[body[i]["name"]] = body[i]["value"]
 			if "filename" in body[i]:
 				value["filename"] = body[i]["filename"]
-		filename = str(time.time()) + value["filename"]
+		filename = str(time.time()).replace(".", "_") + value["filename"]
 		save_file(filename, "./", value["img"])
-		return {"code": 200, "file": bytes("RECEIVED", "utf-8"), "type": "text/plain"}
+		message = s_function.encryptage(value["message"].decode("utf-8"), value["password"].decode("utf-8"))
+		f = filename.split('.')
+		if f[len(f)-1] == "bmp":
+			s_function.steganoBMP(filename, message, len(message))
+		elif f[len(f)-1] == "png":
+			s_function.encodePng(filename, message)
+		else:
+			return {"code": "409", "file": "Mauvais type"}
+		return {"code": 200, "file": bytes(filename, "utf-8"), "type": "text/plain"}
 	elif URI == "/stegano-reverse":
 		value = {}
 		for i in range(len(body)):
 			value[body[i]["name"]] = body[i]["value"]
 			if "filename" in body[i]:
 				value["filename"] = body[i]["filename"]
-		filename = str(time.time()) + value["filename"]
+		filename = str(time.time()).replace(".", "_") + value["filename"]
 		save_file(filename, "./", value["img"])
-		return {"code": 200, "file": bytes("RECEIVED", "utf-8"), "type": "text/plain"}
+		f = filename.split('.')
+		if f[len(f) - 1] == "bmp":
+			message = s_function.steganoBMPReverse(filename)
+		elif f[len(f) - 1] == "png":
+			message = s_function.decodePng(filename)
+		else:
+			return {"code": "409", "file": "Mauvais type"}
+		message = s_function.decryptage(message, value["password"].decode("utf8"))
+		return {"code": 200, "file": bytes(message, "utf-8"), "type": "text/plain"}
 	else:
 		return {"code": 404}
 
@@ -60,6 +89,10 @@ def parse_post(body):
 		try:
 			if len(lines[i]) == 0:
 				value.append(lines[i + 1])
+				i += 2
+				while i < len(lines) and lines[i][0] != 45:
+					value[len(value)-1] += bytes("\r\n", 'utf-8')+lines[i]
+					i += 1
 			data = lines[i][:20].decode("utf-8")
 			if data == "Content-Disposition:":
 				line = lines[i].decode("utf-8")
@@ -83,14 +116,14 @@ def parse_post(body):
 
 
 def send_rep(self, response):
-	if response['code'] != 404:
+	if response['code'] == 200:
 		self.send_response(200)
 		self.send_header("Content-type", response['type'])
 		self.end_headers()
 		self.wfile.write(response['file'])
 	else:
-		self.send_response(404)
+		self.send_response(response['code'])
 		self.send_header("Content-type", 'text/plain')
 		self.end_headers()
-		self.wfile.write(bytes("Introuvable", "utf-8"))
+		self.wfile.write(bytes("", "utf-8"))
 

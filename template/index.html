@@ -60,7 +60,7 @@
         req.onreadystatechange = function (){
             if(req.readyState === req.DONE){
                 if(req.status === 200){
-                    console.log(req.response);
+                    makelink(req.response);
                 }
             }
         }
@@ -74,13 +74,22 @@
         req.onreadystatechange = function (){
             if(req.readyState === req.DONE){
                 if(req.status === 200){
-                    console.log(req.response);
+                    text = document.getElementById("Result")
+                    text.innerText = req.response
                 }
             }
         }
         req.open("POST", "http://localhost:8443/stegano-reverse");
         req.send(FD);
         return false;
+    }
+    function makelink(href){
+        div = document.getElementById("resultImg");
+        a = document.createElement("a");
+        a.href = "http://localhost:8443/retrieve-" + href;
+        a.target = "_blank";
+        a.innerHTML = "Image a r&eacute;cup";
+        div.appendChild(a)
     }
 </script>
 </html>

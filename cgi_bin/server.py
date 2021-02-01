@@ -1,6 +1,6 @@
 import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import cgi_bin.router as router
+import router
 
 hostname = "localhost"
 hostPort = 8443

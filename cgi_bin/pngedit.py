@@ -1,6 +1,6 @@
-import function
+import s_function
 
-function.encodePng('image1.jpg', ['b', 'e'])
+s_function.encodePng('image1.jpg', ['b', 'e'])
 
-function.decodePng('encoded.png')
+s_function.decodePng('encoded.png')
 # decodePng('image1.jpg')
